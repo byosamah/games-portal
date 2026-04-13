@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <title>Endless Runner — threejs-master Test</title>
+  <link rel="stylesheet" href="styles.css">
+
+  <script type="importmap">
+  {
+    "imports": {
+      "three": "https://cdn.jsdelivr.net/npm/three@0.162.0/build/three.module.js",
+      "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.162.0/examples/jsm/"
+    }
+  }
+  </script>
+</head>
+<body>
+  <canvas id="game"></canvas>
+
+  <!-- Loading screen (visible until all GLTF assets load) -->
+  <div id="loading-screen">
+    <h2>Loading</h2>
+    <div id="loading-bar-bg"><div id="loading-bar"></div></div>
+    <div id="loading-asset">Preparing...</div>
+  </div>
+
+  <!-- Character select screen -->
+  <div id="char-select-screen" class="hidden">
+    <canvas id="char-preview"></canvas>
+    <div id="char-category">CHARACTERS</div>
+    <div id="char-name">Male 1</div>
+    <div class="char-nav">
+      <button id="char-prev" aria-label="Previous character">&#9664;</button>
+      <button id="char-next" aria-label="Next character">&#9654;</button>
+    </div>
+    <div class="char-dots" id="char-dots"></div>
+    <button id="char-confirm">SELECT</button>
+    <div id="char-hint">&larr; &rarr; to browse &middot; SPACE to select</div>
+  </div>
+
+  <div id="ui">
+    <div id="flash"></div>
+
+    <div id="score-display" class="hidden">
+      <div id="score">0</div>
+      <div id="high-score">BEST: 0</div>
+    </div>
+
+    <!-- Hidden until assets finish loading -->
+    <div id="start-screen" class="screen hidden">
+      <h1>ENDLESS RUNNER</h1>
+      <p>PRESS SPACE TO START</p>
+      <p class="subtitle">Jump over obstacles — survive as long as you can</p>
+    </div>
+
+    <div id="game-over-screen" class="screen hidden">
+      <h1>GAME OVER</h1>
+      <div class="final-score" id="final-score">0</div>
+      <div class="new-record" id="new-record">NEW RECORD!</div>
+      <div id="game-over-best">BEST: 0</div>
+      <button id="restart-btn">PLAY AGAIN</button>
+    </div>
+
+    <div id="float-container"></div>
+    <button id="jump-btn">JUMP</button>
+  </div>
+
+  <!-- Global error handler — catch crashes before they vanish into the void -->
+  <script>
+  window.onerror = function(msg, src, line, col, err) {
+    console.error('Runtime error:', { msg, src, line, col, err });
+    var el = document.getElementById('error-toast');
+    if (el) { el.textContent = 'Something broke — check console'; el.hidden = false; }
+  };
+  window.onunhandledrejection = function(e) {
+    console.error('Unhandled promise rejection:', e.reason);
+    var el = document.getElementById('error-toast');
+    if (el) { el.textContent = 'Load error — check console'; el.hidden = false; }
+  };
+  </script>
+
+  <div id="error-toast" hidden></div>
+  <script type="module" src="js/main.js"></script>
+</body>
+</html>

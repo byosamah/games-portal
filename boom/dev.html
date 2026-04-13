@@ -1,0 +1,623 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BOOM — Dev Dashboard</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root {
+            --bg: #0a0a0a;
+            --surface: #141414;
+            --border: #2a2a2a;
+            --text: #e0e0e0;
+            --dim: #666;
+            --red: #ff4444;
+            --green: #44ff66;
+            --yellow: #ffaa00;
+            --ui: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+            --mono: 'SF Mono', 'Fira Code', 'Cascadia Code', monospace;
+        }
+
+        body {
+            background: var(--bg);
+            color: var(--text);
+            font-family: var(--ui);
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        /* ── Toolbar ── */
+        .toolbar {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding: 0 16px;
+            background: var(--surface);
+            border-bottom: 1px solid var(--border);
+            height: 42px;
+            flex-shrink: 0;
+            z-index: 10;
+        }
+
+        .logo {
+            font-weight: 800;
+            font-size: 13px;
+            letter-spacing: 3px;
+            color: var(--red);
+        }
+
+        .logo-sub {
+            font-size: 10px;
+            color: var(--dim);
+            letter-spacing: 1px;
+            margin-left: -8px;
+        }
+
+        .sep {
+            width: 1px;
+            height: 18px;
+            background: var(--border);
+        }
+
+        .toolbar label {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 11px;
+            color: var(--dim);
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .toolbar button {
+            background: var(--border);
+            border: none;
+            color: var(--text);
+            padding: 4px 10px;
+            border-radius: 4px;
+            font-size: 11px;
+            cursor: pointer;
+            font-family: var(--ui);
+            transition: background 0.15s;
+        }
+
+        .toolbar button:hover { background: #3a3a3a; }
+        .toolbar button:active { background: #444; }
+
+        .toolbar select {
+            background: var(--bg);
+            color: var(--text);
+            border: 1px solid var(--border);
+            padding: 2px 4px;
+            border-radius: 3px;
+            font-size: 10px;
+            font-family: var(--mono);
+        }
+
+        .status {
+            margin-left: auto;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 10px;
+            font-family: var(--mono);
+            color: var(--dim);
+        }
+
+        .dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: var(--green);
+            transition: background 0.3s;
+        }
+
+        .dot.off { background: var(--red); }
+
+        .dot.flash {
+            background: var(--yellow);
+            animation: pulse 0.4s ease-in-out 3;
+        }
+
+        @keyframes pulse { 50% { transform: scale(2.2); opacity: 0.6; } }
+
+        /* ── Toggle switch ── */
+        .toggle {
+            position: relative;
+            width: 30px;
+            height: 16px;
+            appearance: none;
+            -webkit-appearance: none;
+            background: var(--border);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background 0.2s;
+            border: none;
+            outline: none;
+            flex-shrink: 0;
+        }
+
+        .toggle:checked { background: var(--green); }
+
+        .toggle::after {
+            content: '';
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            width: 12px;
+            height: 12px;
+            background: white;
+            border-radius: 50%;
+            transition: transform 0.2s;
+        }
+
+        .toggle:checked::after { transform: translateX(14px); }
+
+        /* ── Game container ── */
+        .game-wrap {
+            flex: 1;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .game-wrap iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+            display: block;
+        }
+
+        .flash-overlay {
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+            z-index: 5;
+            border: 2px solid transparent;
+            transition: border-color 0.15s, opacity 0.3s;
+            opacity: 0;
+        }
+
+        .flash-overlay.active {
+            border-color: var(--yellow);
+            opacity: 1;
+        }
+
+        /* ── Toasts ── */
+        .toasts {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            z-index: 20;
+            pointer-events: none;
+        }
+
+        .toast {
+            background: rgba(10, 10, 10, 0.92);
+            border: 1px solid var(--border);
+            border-left: 3px solid var(--yellow);
+            padding: 5px 10px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-family: var(--mono);
+            color: var(--yellow);
+            backdrop-filter: blur(8px);
+            animation: toastIn 0.2s ease-out, toastOut 0.3s ease-in 2.7s forwards;
+        }
+
+        @keyframes toastIn { from { transform: translateX(16px); opacity: 0; } }
+        @keyframes toastOut { to { opacity: 0; transform: translateY(-4px); } }
+
+        /* ── Console panel ── */
+        .console {
+            background: var(--surface);
+            border-top: 1px solid var(--border);
+            flex-shrink: 0;
+            overflow: hidden;
+            transition: height 0.2s ease;
+        }
+
+        .console.closed { height: 28px; }
+        .console.open { height: 200px; }
+
+        .console-head {
+            display: flex;
+            align-items: center;
+            padding: 0 14px;
+            height: 28px;
+            cursor: pointer;
+            user-select: none;
+            gap: 8px;
+        }
+
+        .console-head span {
+            font-size: 11px;
+            color: var(--dim);
+            font-family: var(--mono);
+        }
+
+        .badge {
+            background: var(--red);
+            color: white;
+            font-size: 9px;
+            padding: 1px 5px;
+            border-radius: 8px;
+            font-family: var(--mono);
+        }
+
+        .console-head .clear-btn {
+            margin-left: auto;
+            background: none;
+            border: none;
+            color: var(--dim);
+            cursor: pointer;
+            font-size: 10px;
+            font-family: var(--ui);
+            padding: 2px 6px;
+        }
+
+        .console-head .clear-btn:hover { color: var(--text); }
+
+        .console-body {
+            height: calc(100% - 28px);
+            overflow-y: auto;
+            padding: 2px 14px 8px;
+            font-family: var(--mono);
+            font-size: 11px;
+            line-height: 1.5;
+        }
+
+        .console-body::-webkit-scrollbar { width: 4px; }
+        .console-body::-webkit-scrollbar-track { background: transparent; }
+        .console-body::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+
+        .centry {
+            display: flex;
+            gap: 8px;
+            padding: 1px 0;
+        }
+
+        .centry .ts { color: #444; flex-shrink: 0; }
+        .centry.log .msg { color: var(--text); }
+        .centry.warn .msg { color: var(--yellow); }
+        .centry.error .msg { color: var(--red); }
+        .centry .msg { word-break: break-all; }
+    </style>
+</head>
+<body>
+
+<div class="toolbar">
+    <span class="logo">BOOM</span>
+    <span class="logo-sub">DEV</span>
+    <div class="sep"></div>
+
+    <label>
+        <input type="checkbox" class="toggle" id="autoToggle" checked>
+        Auto-reload
+    </label>
+
+    <label>
+        Poll
+        <select id="pollSel">
+            <option value="500">0.5s</option>
+            <option value="1000" selected>1s</option>
+            <option value="2000">2s</option>
+            <option value="5000">5s</option>
+        </select>
+    </label>
+
+    <label>
+        Debounce
+        <select id="delaySel">
+            <option value="0">0ms</option>
+            <option value="300" selected>300ms</option>
+            <option value="500">500ms</option>
+            <option value="1000">1s</option>
+        </select>
+    </label>
+
+    <button id="reloadBtn" title="Force reload (⌘⇧R)">↻ Reload</button>
+    <button id="consoleBtn">Console</button>
+
+    <div class="status">
+        <div class="dot" id="dot"></div>
+        <span id="statusTxt">starting...</span>
+    </div>
+</div>
+
+<div class="game-wrap">
+    <iframe id="game" src="/index.html"></iframe>
+    <div class="flash-overlay" id="flash"></div>
+    <div class="toasts" id="toasts"></div>
+</div>
+
+<div class="console closed" id="console">
+    <div class="console-head" id="consoleHead">
+        <span>Console</span>
+        <span class="badge" id="errBadge" style="display:none">0</span>
+        <button class="clear-btn" id="clearBtn">Clear</button>
+    </div>
+    <div class="console-body" id="consoleBody"></div>
+</div>
+
+<script>
+// ── Watched files ──
+const WATCHED = [
+    'src/main.js', 'src/config.js', 'src/utils.js',
+    'src/SoundManager.js', 'src/AssetLoader.js', 'src/InputManager.js',
+    'src/AnimController.js', 'src/CinematicManager.js', 'src/ParticlePool.js',
+    'src/Player.js', 'src/Enemy.js', 'src/Projectile.js',
+    'src/ExplodingBarrel.js', 'src/Pickup.js', 'src/WaveManager.js',
+    'src/UIManager.js', 'src/GameStateMachine.js', 'src/Game.js',
+    'src/TouchController.js', 'index.html', 'styles.css'
+];
+
+// ── State ──
+const modTimes = {};
+let initialized = false;
+let pollTimer = null;
+let reloadTimer = null;
+let pending = [];
+let errCount = 0;
+let lastReloadTime = null;
+let reloadCount = 0;
+
+// ── DOM refs ──
+const $ = id => document.getElementById(id);
+const game      = $('game');
+const dot       = $('dot');
+const statusTxt = $('statusTxt');
+const flash     = $('flash');
+const toastBox  = $('toasts');
+const conPanel  = $('console');
+const conBody   = $('consoleBody');
+const errBadge  = $('errBadge');
+
+// ── Controls ──
+$('autoToggle').addEventListener('change', e => {
+    addLog('log', e.target.checked ? 'Auto-reload enabled' : 'Auto-reload paused');
+});
+
+$('pollSel').addEventListener('change', () => restartPoll());
+$('reloadBtn').addEventListener('click', () => doReload(['manual']));
+
+$('consoleBtn').addEventListener('click', toggleConsole);
+$('consoleHead').addEventListener('click', toggleConsole);
+$('clearBtn').addEventListener('click', e => {
+    e.stopPropagation();
+    conBody.replaceChildren();
+    errCount = 0;
+    updateBadge();
+});
+
+function toggleConsole() {
+    conPanel.classList.toggle('open');
+    conPanel.classList.toggle('closed');
+}
+
+// ── Keyboard shortcut ──
+document.addEventListener('keydown', e => {
+    if ((e.metaKey || e.ctrlKey) && e.shiftKey && e.key === 'R') {
+        e.preventDefault();
+        doReload(['⌘⇧R']);
+    }
+});
+
+// ── Polling ──
+function startPoll() {
+    poll();
+    pollTimer = setInterval(poll, getInterval());
+}
+
+function restartPoll() {
+    clearInterval(pollTimer);
+    pollTimer = setInterval(poll, getInterval());
+}
+
+function getInterval() {
+    return parseInt($('pollSel').value);
+}
+
+function getDelay() {
+    return parseInt($('delaySel').value);
+}
+
+async function poll() {
+    const changed = [];
+    let online = true;
+
+    const checks = WATCHED.map(async file => {
+        try {
+            const r = await fetch(file, { method: 'HEAD', cache: 'no-store' });
+            const mod = r.headers.get('Last-Modified') || r.headers.get('ETag') || '';
+
+            if (initialized && modTimes[file] && modTimes[file] !== mod) {
+                changed.push(file);
+            }
+            modTimes[file] = mod;
+        } catch {
+            online = false;
+        }
+    });
+
+    await Promise.all(checks);
+
+    if (!initialized) {
+        initialized = true;
+        updateStatus(online);
+        addLog('log', 'Watching ' + WATCHED.length + ' files');
+        return;
+    }
+
+    updateStatus(online);
+
+    if (changed.length > 0) {
+        changed.forEach(f => showToast(f));
+
+        if ($('autoToggle').checked) {
+            scheduleReload(changed);
+        } else {
+            addLog('warn', 'Changed: ' + shortNames(changed) + ' (auto-reload off)');
+        }
+    }
+}
+
+function scheduleReload(files) {
+    pending.push(...files);
+    if (reloadTimer) clearTimeout(reloadTimer);
+
+    reloadTimer = setTimeout(() => {
+        doReload([...new Set(pending)]);
+        pending = [];
+        reloadTimer = null;
+    }, getDelay());
+}
+
+// ── Reload ──
+function doReload(files) {
+    flash.classList.add('active');
+    setTimeout(() => flash.classList.remove('active'), 400);
+
+    try {
+        game.contentWindow.location.reload();
+    } catch {
+        game.src = '/index.html?' + Date.now();
+    }
+
+    reloadCount++;
+    lastReloadTime = Date.now();
+    addLog('log', 'Reloaded (#' + reloadCount + ') — ' + shortNames(files));
+
+    dot.classList.remove('flash');
+    void dot.offsetWidth;
+    dot.classList.add('flash');
+    setTimeout(() => dot.classList.remove('flash'), 1500);
+}
+
+// ── Status ──
+function updateStatus(online) {
+    if (!online) {
+        dot.className = 'dot off';
+        statusTxt.textContent = 'server offline';
+        return;
+    }
+
+    dot.classList.remove('off');
+
+    if (lastReloadTime) {
+        const ago = Math.round((Date.now() - lastReloadTime) / 1000);
+        statusTxt.textContent = 'watching · #' + reloadCount + ' ' + ago + 's ago';
+    } else {
+        statusTxt.textContent = 'watching';
+    }
+}
+
+// ── Toast ──
+function showToast(file) {
+    const el = document.createElement('div');
+    el.className = 'toast';
+    el.textContent = '\u270E ' + shortName(file);
+    toastBox.appendChild(el);
+    setTimeout(() => el.remove(), 3000);
+}
+
+// ── Console capture ──
+game.addEventListener('load', hookConsole);
+
+function hookConsole() {
+    try {
+        const w = game.contentWindow;
+        if (!w || !w.console) return;
+
+        ['log', 'warn', 'error'].forEach(level => {
+            const orig = w.console[level].bind(w.console);
+            w.console[level] = (...args) => {
+                addLog(level, args.map(serialize).join(' '));
+                orig(...args);
+            };
+        });
+
+        w.addEventListener('error', e => {
+            addLog('error', (e.message || 'Error') + ' @ ' + shortName(e.filename || '') + ':' + e.lineno);
+        });
+
+        w.addEventListener('unhandledrejection', e => {
+            addLog('error', 'Unhandled: ' + e.reason);
+        });
+    } catch {
+        addLog('warn', 'Console hook failed (cross-origin?)');
+    }
+}
+
+function addLog(level, text) {
+    const entry = document.createElement('div');
+    entry.className = 'centry ' + level;
+
+    const now = new Date();
+    const ts = [now.getHours(), now.getMinutes(), now.getSeconds()]
+        .map(n => String(n).padStart(2, '0')).join(':');
+
+    const tsSpan = document.createElement('span');
+    tsSpan.className = 'ts';
+    tsSpan.textContent = ts;
+
+    const msgSpan = document.createElement('span');
+    msgSpan.className = 'msg';
+    msgSpan.textContent = text;
+
+    entry.appendChild(tsSpan);
+    entry.appendChild(msgSpan);
+    conBody.appendChild(entry);
+    conBody.scrollTop = conBody.scrollHeight;
+
+    if (level === 'error') {
+        errCount++;
+        updateBadge();
+    }
+
+    // Cap entries
+    while (conBody.children.length > 500) {
+        conBody.removeChild(conBody.firstChild);
+    }
+}
+
+function updateBadge() {
+    if (errCount > 0) {
+        errBadge.style.display = '';
+        errBadge.textContent = errCount;
+    } else {
+        errBadge.style.display = 'none';
+    }
+}
+
+// ── Helpers ──
+function shortName(path) {
+    return path.split('/').pop();
+}
+
+function shortNames(files) {
+    return [...new Set(files.map(shortName))].join(', ');
+}
+
+function serialize(val) {
+    if (val === null) return 'null';
+    if (val === undefined) return 'undefined';
+    if (val instanceof Error) return val.name + ': ' + val.message;
+    if (typeof val === 'object') {
+        try { return JSON.stringify(val); }
+        catch { return String(val); }
+    }
+    return String(val);
+}
+
+// ── Init ──
+startPoll();
+</script>
+</body>
+</html>

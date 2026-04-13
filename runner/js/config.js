@@ -1,0 +1,51 @@
+export const CONFIG = {
+  player:   { height: 1.5, jumpForce: 14, gravity: -35 },
+  obstacle: { poolSize: 15, speed: 7, speedMax: 18, speedRamp: 0.012, minGap: 1.6 },
+  nearMiss: { threshold: 0.7, slowMo: 0.4, durationMs: 150 },
+  camera:   { x: 0, y: 4, z: 12, lookY: 1.5 },
+  spawn:    { x: 25, despawn: -15 },
+  score:    { perSecond: 10, nearMissBonus: 15, milestoneEvery: 50 },
+};
+
+export const ASSETS = {
+  player: 'assests/Characters/glTF/Character_Male_1.gltf',
+  enemies: [
+    'assests/Enemies/glTF/Skeleton.gltf',
+    'assests/Enemies/glTF/Zombie.gltf',
+    'assests/Enemies/glTF/Goblin.gltf',
+    'assests/Enemies/glTF/Demon.gltf',
+    'assests/Enemies/glTF/Hedgehog.gltf',
+    'assests/Enemies/glTF/Giant.gltf',
+    'assests/Enemies/glTF/Wizard.gltf',
+    'assests/Enemies/glTF/Yeti.gltf',
+    'assests/Enemies/glTF/Skeleton_Armor.gltf',
+  ],
+  ground: 'assests/Blocks/glTF/Block_Grass.gltf',
+  dirt: 'assests/Blocks/glTF/Block_Dirt.gltf',
+  far:  ['assests/Environment/glTF/DeadTree_1.gltf', 'assests/Environment/glTF/DeadTree_2.gltf', 'assests/Environment/glTF/DeadTree_3.gltf'],
+  mid:  ['assests/Environment/glTF/Tree_1.gltf', 'assests/Environment/glTF/Tree_2.gltf', 'assests/Environment/glTF/Tree_3.gltf', 'assests/Environment/glTF/Bamboo.gltf', 'assests/Environment/glTF/Bamboo_Mid.gltf'],
+  near: ['assests/Environment/glTF/Bush.gltf', 'assests/Environment/glTF/Mushroom.gltf', 'assests/Environment/glTF/Flowers_1.gltf', 'assests/Environment/glTF/Flowers_2.gltf', 'assests/Environment/glTF/Grass_Big.gltf', 'assests/Environment/glTF/Grass_Small.gltf', 'assests/Environment/glTF/Rock1.gltf', 'assests/Environment/glTF/Rock2.gltf', 'assests/Environment/glTF/Plant_2.gltf', 'assests/Environment/glTF/Plant_3.gltf'],
+  groundDetail: ['assests/Environment/glTF/Grass_Small.gltf', 'assests/Environment/glTF/Flowers_1.gltf', 'assests/Environment/glTF/Flowers_2.gltf'],
+};
+
+export const CHARACTERS = [
+  { name: 'Male 1',          category: 'Characters', path: 'assests/Characters/glTF/Character_Male_1.gltf' },
+  { name: 'Male 2',          category: 'Characters', path: 'assests/Characters/glTF/Character_Male_2.gltf' },
+  { name: 'Female 1',        category: 'Characters', path: 'assests/Characters/glTF/Character_Female_1.gltf' },
+  { name: 'Female 2',        category: 'Characters', path: 'assests/Characters/glTF/Character_Female_2.gltf' },
+  { name: 'Cat',             category: 'Animals',    path: 'assests/Animals/glTF/Cat.gltf' },
+  { name: 'Dog',             category: 'Animals',    path: 'assests/Animals/glTF/Dog.gltf' },
+  { name: 'Horse',           category: 'Animals',    path: 'assests/Animals/glTF/Horse.gltf' },
+  { name: 'Pig',             category: 'Animals',    path: 'assests/Animals/glTF/Pig.gltf' },
+  { name: 'Raccoon',         category: 'Animals',    path: 'assests/Animals/glTF/Raccoon.gltf' },
+  { name: 'Sheep',           category: 'Animals',    path: 'assests/Animals/glTF/Sheep.gltf' },
+  { name: 'Wolf',            category: 'Animals',    path: 'assests/Animals/glTF/Wolf.gltf' },
+  { name: 'Skeleton',        category: 'Enemies',    path: 'assests/Enemies/glTF/Skeleton.gltf' },
+  { name: 'Skeleton Armor',  category: 'Enemies',    path: 'assests/Enemies/glTF/Skeleton_Armor.gltf' },
+  { name: 'Zombie',          category: 'Enemies',    path: 'assests/Enemies/glTF/Zombie.gltf' },
+  { name: 'Goblin',          category: 'Enemies',    path: 'assests/Enemies/glTF/Goblin.gltf' },
+  { name: 'Demon',           category: 'Enemies',    path: 'assests/Enemies/glTF/Demon.gltf' },
+  { name: 'Giant',           category: 'Enemies',    path: 'assests/Enemies/glTF/Giant.gltf' },
+  { name: 'Wizard',          category: 'Enemies',    path: 'assests/Enemies/glTF/Wizard.gltf' },
+  { name: 'Yeti',            category: 'Enemies',    path: 'assests/Enemies/glTF/Yeti.gltf' },
+];
