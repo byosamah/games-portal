@@ -37,7 +37,7 @@ h1 {
 .tagline {
   margin-top: 0.5rem;
   font-size: 0.875rem;
-  color: #555;
+  color: #888;
   letter-spacing: 0.05em;
 }
 
@@ -69,6 +69,11 @@ h1 {
   transform: scale(1.02);
 }
 
+.card:focus-visible {
+  outline: 2px solid rgba(255, 255, 255, 0.4);
+  outline-offset: 2px;
+}
+
 .card h2 {
   font-size: 1.25rem;
   font-weight: 700;
@@ -79,7 +84,7 @@ h1 {
 
 .card p {
   font-size: 0.8125rem;
-  color: #777;
+  color: #888;
   line-height: 1.5;
 }
 
