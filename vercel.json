@@ -1,0 +1,9 @@
+{
+  "cleanUrls": true,
+  "trailingSlash": false,
+  "rewrites": [
+    { "source": "/boom", "destination": "/boom/index.html" },
+    { "source": "/runner", "destination": "/runner/index.html" },
+    { "source": "/space", "destination": "/space/index.html" }
+  ]
+}
