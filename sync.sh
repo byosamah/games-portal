@@ -17,7 +17,7 @@ echo ""
 
 echo "=== Building SPACE ==="
 cd "$SOURCE/space"
-npm run build
+npx vite build --base='./'
 echo ""
 
 echo "=== Syncing SPACE (build output) ==="
