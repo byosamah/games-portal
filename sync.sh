@@ -17,7 +17,11 @@ echo ""
 
 echo "=== Building SPACE ==="
 cd "$SOURCE/space"
+# Temporarily patch ASSET_BASE to use relative path for subdirectory deployment
+sed -i.bak "s|ASSET_BASE = '/assets'|ASSET_BASE = './assets'|" src/config.ts
 npx vite build --base='./'
+# Restore original
+mv src/config.ts.bak src/config.ts
 echo ""
 
 echo "=== Syncing SPACE (build output) ==="
