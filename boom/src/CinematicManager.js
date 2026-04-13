@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 import AnimController from './AnimController.js';
-import { DIALOGUE, SAUDI_WEAPON_BONE } from './config.js';
+import { DIALOGUE, WEAPON_BONE_NAMES } from './config.js';
 
 const CAMERA_PRESETS = {
   wide:    { pos: [0, 3.5, 7],    look: [0, 1.2, 0] },
@@ -73,9 +73,8 @@ export default class CinematicManager {
     this.cleanup();
 
     // Soldier 1 (Sgt Reyes) — left
-    const s1Data = assets.cloneCharacter('saudi');
+    const s1Data = assets.cloneCharacter('soldier');
     const s1 = s1Data.scene;
-    s1.scale.setScalar(1.4);
     s1.position.set(-1.5, 0, 0);
     s1.rotation.y = Math.PI / 3;
     this.scene.add(s1);
@@ -83,40 +82,25 @@ export default class CinematicManager {
     s1Anim.play('Idle');
 
     // Soldier 2 (player stand-in) — right
-    const s2Data = assets.cloneCharacter('saudi');
+    const s2Data = assets.cloneCharacter('soldier');
     const s2 = s2Data.scene;
-    s2.scale.setScalar(1.4);
     s2.position.set(1.5, 0, 0);
     s2.rotation.y = -Math.PI / 3;
     this.scene.add(s2);
     const s2Anim = new AnimController(s2, s2Data.animations);
     s2Anim.play('Idle');
 
-    // Attach weapons to RightHand bone
-    this._attachCinematicWeapon(s1, assets, 'AK');
-    this._attachCinematicWeapon(s2, assets, 'Pistol');
+    // Hide all weapons, then show AK on S1, Pistol on S2
+    [s1, s2].forEach(soldier => {
+      soldier.traverse(child => {
+        if (WEAPON_BONE_NAMES.includes(child.name)) child.visible = false;
+      });
+    });
+    s1.traverse(child => { if (child.name === 'AK') child.visible = true; });
+    s2.traverse(child => { if (child.name === 'Pistol') child.visible = true; });
 
     this.soldiers = [s1, s2];
     this.soldierAnims = [s1Anim, s2Anim];
-  }
-
-  _attachCinematicWeapon(scene, assets, weaponName) {
-    let handBone = null;
-    scene.traverse(child => {
-      if (child.name === SAUDI_WEAPON_BONE || child.name === 'mixamorigRightHand') {
-        handBone = child;
-      }
-    });
-    if (!handBone) return;
-
-    const weapon = assets.cloneStatic(weaponName.toLowerCase());
-    if (!weapon) return;
-
-    // Saudi skeleton has 0.01 inherited scale (×1.4 mesh) — weapons need ~71x to compensate
-    weapon.scale.setScalar(71);
-    weapon.position.set(0, 0, 5);
-    weapon.rotation.set(0, 0, 0);
-    handBone.add(weapon);
   }
 
   _applyPreset(name) {

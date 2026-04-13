@@ -115,8 +115,7 @@ export default class Game {
     this.particles = new ParticlePool(this.scene);
 
     const manifest = {
-      saudi: 'assets/Characters/glTF/Saudi_Character_output.glb',
-      soldier_anims: 'assets/Characters/glTF/Character_Soldier.gltf',
+      soldier: 'assets/Characters/glTF/Character_Soldier.gltf',
       enemy: 'assets/Characters/glTF/Character_Enemy.gltf',
       hazmat: 'assets/Characters/glTF/Character_Hazmat.gltf',
       barrel: 'assets/Environment/glTF/ExplodingBarrel.gltf',
@@ -170,7 +169,6 @@ export default class Game {
     };
 
     await this.assets.loadAll(manifest, (pct) => this.ui.setLoadProgress(pct));
-    this.assets.retargetAnimations('soldier_anims', 'saudi');
 
     this._buildArena(ARENA_OBJECTS);
     this.sound.init();

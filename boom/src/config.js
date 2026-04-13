@@ -56,32 +56,6 @@ export const CONFIG = {
 
 export const WEAPON_BONE_NAMES = ['AK','GrenadeLauncher','Knife_1','Knife_2','Pistol','Revolver','Revolver_Small','RocketLauncher','ShortCannon','Shotgun','Shovel','SMG','Sniper','Sniper_2'];
 
-export const SAUDI_WEAPON_BONE = 'RightHand';
-
-// Soldier skeleton → Saudi skeleton bone name mapping
-// Soldier bones: Hips, Abdomen, Torso, Body_1, Neck, Head, ShoulderL/R, UpperArmL/R, LowerArmL/R, UpperLegL/R, LowerLegL/R, FootL/R
-// Saudi bones:   Hips, Spine02, Spine01, Spine, neck, Head, LeftShoulder/RightShoulder, LeftArm/RightArm, LeftForeArm/RightForeArm, LeftUpLeg/RightUpLeg, LeftLeg/RightLeg, LeftFoot/RightFoot
-export const SAUDI_BONE_MAP = {
-  'Hips':           'Hips',
-  'Abdomen':        'Spine02',
-  'Torso':          'Spine01',
-  'Body_1':         'Spine',
-  'Neck':           'neck',
-  'Head':           'Head',
-  'ShoulderL':      'LeftShoulder',
-  'UpperArmL':      'LeftArm',
-  'LowerArmL':      'LeftForeArm',
-  'ShoulderR':      'RightShoulder',
-  'UpperArmR':      'RightArm',
-  'LowerArmR':      'RightForeArm',
-  'UpperLegL':      'LeftUpLeg',
-  'LowerLegL':      'LeftLeg',
-  'FootL':          'LeftFoot',
-  'UpperLegR':      'RightUpLeg',
-  'LowerLegR':      'RightLeg',
-  'FootR':          'RightFoot',
-};
-
 export const ARENA_OBJECTS = {
   structure: [
     { m: 'Container_Long', p: [-11,0,-18], r: 0, collider: 3.0 },

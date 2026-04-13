@@ -1,31 +1,26 @@
 import AnimController from './AnimController.js';
-import { CONFIG, SAUDI_WEAPON_BONE } from './config.js';
+import { CONFIG, WEAPON_BONE_NAMES } from './config.js';
 
 export default class Player {
   constructor(scene, assets) {
-    const data = assets.cloneCharacter('saudi');
+    const data = assets.cloneCharacter('soldier');
     this.mesh = data.scene;
-    this.mesh.scale.setScalar(1.4);
     this.mesh.position.set(0, 0, 0);
     scene.add(this.mesh);
 
     this.anim = new AnimController(this.mesh, data.animations);
     this.anim.play('Idle');
 
-    // Find the RightHand bone for weapon attachment
-    this._handBone = null;
+    this.weaponMeshes = {};
     this.mesh.traverse(child => {
-      if (child.name === SAUDI_WEAPON_BONE || child.name === 'mixamorigRightHand') {
-        this._handBone = child;
+      if (WEAPON_BONE_NAMES.includes(child.name)) {
+        this.weaponMeshes[child.name] = child;
+        child.visible = false;
       }
     });
 
-    this._assets = assets;
-    this._weaponModels = {};
-    this._currentWeaponMesh = null;
-
     this.currentWeapon = 'Pistol';
-    this._attachWeapon('Pistol');
+    if (this.weaponMeshes['Pistol']) this.weaponMeshes['Pistol'].visible = true;
 
     this.health = CONFIG.PLAYER_HEALTH;
     this.maxHealth = CONFIG.PLAYER_HEALTH;
@@ -38,37 +33,10 @@ export default class Player {
     this.position = this.mesh.position;
   }
 
-  _attachWeapon(name) {
-    if (!this._handBone) return;
-
-    // Hide current weapon
-    if (this._currentWeaponMesh) {
-      this._currentWeaponMesh.visible = false;
-    }
-
-    // Reuse cached weapon or clone a new one
-    if (this._weaponModels[name]) {
-      this._weaponModels[name].visible = true;
-      this._currentWeaponMesh = this._weaponModels[name];
-      return;
-    }
-
-    const weaponModel = this._assets.cloneStatic(name.toLowerCase());
-    if (!weaponModel) return;
-
-    // Saudi skeleton has 0.01 inherited scale (×1.4 mesh) — weapons need ~71x to compensate
-    weaponModel.scale.setScalar(71);
-    weaponModel.position.set(0, 0, 5);
-    weaponModel.rotation.set(0, 0, 0);
-
-    this._handBone.add(weaponModel);
-    this._weaponModels[name] = weaponModel;
-    this._currentWeaponMesh = weaponModel;
-  }
-
   setWeapon(name) {
+    if (this.weaponMeshes[this.currentWeapon]) this.weaponMeshes[this.currentWeapon].visible = false;
     this.currentWeapon = name;
-    this._attachWeapon(name);
+    if (this.weaponMeshes[name]) this.weaponMeshes[name].visible = true;
   }
 
   getWeaponStats() { return CONFIG.WEAPONS[this.currentWeapon]; }
@@ -128,9 +96,8 @@ export default class Player {
     this.mesh.position.set(0, 0, 0);
     this.mesh.rotation.y = 0;
     this.currentWeapon = 'Pistol';
-    // Hide all cached weapons, show pistol
-    Object.values(this._weaponModels).forEach(m => m.visible = false);
-    this._attachWeapon('Pistol');
+    Object.values(this.weaponMeshes).forEach(m => m.visible = false);
+    if (this.weaponMeshes['Pistol']) this.weaponMeshes['Pistol'].visible = true;
     this.fireCooldown = 0;
     this.contactCooldown = 0;
     this.anim.play('Idle', 0);
