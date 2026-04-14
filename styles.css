@@ -7,8 +7,8 @@
 }
 
 body {
-  background: #0a0a0f;
-  color: #e0e0e0;
+  background: #0c0c12;
+  color: #c8c8d0;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   min-height: 100vh;
   display: flex;
@@ -18,28 +18,32 @@ body {
 
 main {
   width: 100%;
-  max-width: 900px;
-  padding: 2rem 1.5rem;
+  max-width: 1000px;
+  padding: 2.5rem 1.5rem;
 }
 
+/* --- Header --- */
+
 header {
-  text-align: center;
-  margin-bottom: 3rem;
+  margin-bottom: 2rem;
 }
 
 h1 {
-  font-size: 2.5rem;
-  font-weight: 700;
-  letter-spacing: 0.15em;
-  color: #fff;
+  font-family: 'Press Start 2P', monospace;
+  font-size: 1.25rem;
+  font-weight: 400;
+  letter-spacing: 0.04em;
+  color: #e8e8f0;
 }
 
 .tagline {
-  margin-top: 0.5rem;
-  font-size: 0.875rem;
-  color: #888;
-  letter-spacing: 0.05em;
+  margin-top: 0.75rem;
+  font-family: monospace;
+  font-size: 0.75rem;
+  color: #555;
 }
+
+/* --- Game Grid --- */
 
 .games {
   display: grid;
@@ -50,52 +54,101 @@ h1 {
 @media (min-width: 768px) {
   .games {
     grid-template-columns: repeat(3, 1fr);
+    gap: 0.75rem;
   }
 }
 
+/* --- Cards --- */
+
 .card {
   display: block;
-  padding: 1.75rem;
+  position: relative;
+  overflow: hidden;
   background: #111118;
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 8px;
+  border: 2px solid #1a1a24;
   text-decoration: none;
   color: inherit;
-  transition: border-color 0.2s ease, transform 0.2s ease;
+  transition: border-color 0.15s ease, transform 0.15s ease;
 }
 
 .card:hover {
-  border-color: rgba(255, 255, 255, 0.2);
-  transform: scale(1.02);
+  border-color: #e8e8f0;
+  transform: translateY(-2px);
 }
 
 .card:focus-visible {
-  outline: 2px solid rgba(255, 255, 255, 0.4);
+  outline: 2px solid #e8e8f0;
   outline-offset: 2px;
 }
 
+/* Card image */
+
+.card-img {
+  position: relative;
+  aspect-ratio: 4 / 3;
+  overflow: hidden;
+  background: #0c0c12;
+}
+
+.card-img img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform 0.3s ease;
+}
+
+.card:hover .card-img img {
+  transform: scale(1.04);
+}
+
+/* Card info */
+
+.card-info {
+  padding: 1rem 1.125rem 1.25rem;
+  border-top: 2px solid #1a1a24;
+}
+
+.card:hover .card-info {
+  border-top-color: #e8e8f0;
+}
+
 .card h2 {
-  font-size: 1.25rem;
-  font-weight: 700;
-  letter-spacing: 0.08em;
-  color: #fff;
+  font-family: 'Press Start 2P', monospace;
+  font-size: 0.8125rem;
+  font-weight: 400;
+  color: #e8e8f0;
   margin-bottom: 0.5rem;
 }
 
 .card p {
   font-size: 0.8125rem;
-  color: #888;
+  color: #666;
   line-height: 1.5;
 }
 
 .tag {
   display: inline-block;
+  font-family: monospace;
   font-size: 0.625rem;
-  font-weight: 600;
-  letter-spacing: 0.12em;
+  font-weight: 700;
+  letter-spacing: 0.1em;
   color: #888;
-  background: rgba(255, 255, 255, 0.05);
-  padding: 0.25rem 0.625rem;
-  border-radius: 3px;
-  margin-bottom: 0.75rem;
+  border: 1px solid #2a2a36;
+  padding: 0.2rem 0.5rem;
+  margin-bottom: 0.625rem;
+}
+
+/* --- Footer --- */
+
+footer {
+  margin-top: 2.5rem;
+  text-align: center;
+}
+
+footer p {
+  font-family: monospace;
+  font-size: 0.6875rem;
+  color: #3a3a44;
+  letter-spacing: 0.03em;
 }

@@ -5,34 +5,56 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Games — Osama Khalil</title>
   <meta name="description" content="Game experiments by Osama Khalil. Play BOOM, Runner, and Space directly in your browser.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
   <main>
     <header>
-      <h1>GAMES</h1>
-      <p class="tagline">experiments by osama</p>
+      <h1>SELECT GAME</h1>
+      <p class="tagline">// osama's experiments</p>
     </header>
 
     <div class="games">
-      <a href="/boom" class="card">
-        <span class="tag">SHOOTER</span>
-        <h2>BOOM</h2>
-        <p>Top-down 3D shooter with levels and story</p>
+      <a href="/boom/" class="card">
+        <div class="card-img">
+          <img src="img/boom.png" alt="BOOM gameplay — top-down 3D shooter" width="800" height="700" loading="eager">
+        </div>
+        <div class="card-info">
+          <span class="tag">SHOOTER</span>
+          <h2>BOOM</h2>
+          <p>Top-down 3D shooter with levels and story</p>
+        </div>
       </a>
 
-      <a href="/runner" class="card">
-        <span class="tag">RUNNER</span>
-        <h2>RUNNER</h2>
-        <p>Endless runner with 3D characters and obstacles</p>
+      <a href="/runner/" class="card">
+        <div class="card-img">
+          <img src="img/runner.png" alt="Runner gameplay — endless runner with 3D characters" width="800" height="700" loading="eager">
+        </div>
+        <div class="card-info">
+          <span class="tag">RUNNER</span>
+          <h2>RUNNER</h2>
+          <p>Endless runner with 3D characters and obstacles</p>
+        </div>
       </a>
 
-      <a href="/space" class="card">
-        <span class="tag">EXPLORER</span>
-        <h2>SPACE</h2>
-        <p>3D city explorer with procedural generation</p>
+      <a href="/space/" class="card">
+        <div class="card-img">
+          <img src="img/space.png" alt="Space gameplay — 3D city explorer" width="800" height="700" loading="eager">
+        </div>
+        <div class="card-info">
+          <span class="tag">EXPLORER</span>
+          <h2>SPACE</h2>
+          <p>3D city explorer with procedural generation</p>
+        </div>
       </a>
     </div>
+
+    <footer>
+      <p>WASD / tap to play &mdash; built with Three.js</p>
+    </footer>
   </main>
 </body>
 </html>
