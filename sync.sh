@@ -15,8 +15,8 @@ echo "=== Syncing RUNNER ==="
 rsync -av --delete $EXCLUDE "$SOURCE/runner/" "$DEST/runner/"
 echo ""
 
-echo "=== Building SPACE ==="
-cd "$SOURCE/space"
+echo "=== Building AL-MADINA ==="
+cd "$SOURCE/al-madina"
 # Temporarily patch ASSET_BASE to use relative path for subdirectory deployment
 sed -i.bak "s|ASSET_BASE = '/assets'|ASSET_BASE = './assets'|" src/config.ts
 npx vite build --base='./'
@@ -24,8 +24,8 @@ npx vite build --base='./'
 mv src/config.ts.bak src/config.ts
 echo ""
 
-echo "=== Syncing SPACE (build output) ==="
-rsync -av --delete "$SOURCE/space/dist/" "$DEST/space/"
+echo "=== Syncing AL-MADINA (build output) ==="
+rsync -av --delete "$SOURCE/al-madina/dist/" "$DEST/al-madina/"
 echo ""
 
 echo "=== Done ==="
