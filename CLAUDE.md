@@ -45,3 +45,4 @@ Manual: `npx vercel --prod --yes --scope byosama`
 - **Fast dev loop for Al-Madina:** `cd "/Users/osamakhalil/dev/Game Experiments/al-madina" && npm run dev` → `localhost:5173` with HMR. Much faster than `sync.sh` + `vercel dev` for source iteration.
 - **Bash sandbox blocks `sync.sh`, dev servers, and git inside `/Game Experiments/`.** Pass `dangerouslyDisableSandbox: true` to the Bash tool for these. `Edit`/`Write` tools work there regardless.
 - **Game source is a local-only git repo** (no remote). Commits in `/Game Experiments/al-madina/` are safety-only — `games-portal` is the only thing that ships.
+- **Don't rename or delete the session's initial cwd (or any ancestor) during a session.** The Bash tool's cwd guard will then refuse every call with `Path does not exist`. `Edit`/`Write` still work. To unblock: `Write` a placeholder file back under the old path (auto-creates the dir), then Bash resumes.
