@@ -5,83 +5,149 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <title>AL-MADINA</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap"
+    rel="stylesheet"
+  />
   <style>
+    /* ─── Design tokens ─────────────────────────────────────────────
+       One source of truth for colors, typography, and shared button
+       styles. All game UI modules read from these. */
+    :root {
+      --am-font: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+
+      --am-gold: #ffcc33;
+      --am-gold-deep: #ff9a00;
+      --am-cyan: #33ccff;
+      --am-cyan-deep: #0088cc;
+      --am-danger: #e05570;
+      --am-danger-deep: #c23352;
+      --am-success: rgba(34, 160, 80, 0.85);
+      --am-warn: rgba(224, 122, 42, 0.85);
+
+      --am-dark-1: #0a1220;
+      --am-dark-2: #17263b;
+
+      --am-glass: rgba(0, 0, 0, 0.55);
+      --am-glass-strong: rgba(0, 0, 0, 0.75);
+
+      --am-radius-pill: 999px;
+      --am-radius-card: 14px;
+    }
+
     * { margin: 0; padding: 0; box-sizing: border-box; }
-    html, body { width: 100%; height: 100%; overflow: hidden; background: #000; }
+    html, body {
+      width: 100%; height: 100%; overflow: hidden; background: #000;
+      font-family: var(--am-font);
+      color: #fff;
+    }
     canvas { display: block; width: 100%; height: 100%; touch-action: none; }
 
+    /* ─── Shared pill button (primary = gold, danger = coral) ─────── */
+    .am-btn {
+      pointer-events: auto; cursor: pointer;
+      border: none; font: inherit;
+      font-family: var(--am-font);
+      font-weight: 700; font-size: 0.74rem;
+      letter-spacing: 0.09em; text-transform: uppercase;
+      padding: 10px 20px; border-radius: var(--am-radius-pill);
+      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.35);
+      transition: transform 0.1s ease, filter 0.12s ease;
+      backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+    }
+    .am-btn:hover { transform: translateY(-1px); filter: brightness(1.08); }
+    .am-btn:active { transform: translateY(0); filter: brightness(0.94); }
+    .am-btn-primary {
+      background: linear-gradient(90deg, var(--am-gold), var(--am-gold-deep));
+      color: var(--am-dark-1);
+    }
+    .am-btn-danger {
+      background: var(--am-danger);
+      color: #fff;
+    }
+    .am-btn-danger:hover { background: var(--am-danger-deep); filter: none; }
+
+    /* ─── Loading screen ──────────────────────────────────────────── */
     #loading-screen {
       position: fixed; inset: 0; z-index: 1000;
       display: flex; flex-direction: column; align-items: center; justify-content: center;
-      background: linear-gradient(135deg, #0a0a1a 0%, #1a1a2e 50%, #16213e 100%);
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-      color: #fff;
+      background: linear-gradient(135deg, var(--am-dark-1) 0%, var(--am-dark-2) 60%, #1e3a5f 100%);
       transition: opacity 0.6s ease;
     }
     #loading-screen.fade-out { opacity: 0; pointer-events: none; }
     #loading-title {
+      font-family: var(--am-font);
       font-size: 3rem; font-weight: 800; letter-spacing: 0.3em;
       text-transform: uppercase; margin-bottom: 2rem;
-      background: linear-gradient(90deg, #667eea, #764ba2);
+      background: linear-gradient(90deg, var(--am-gold), var(--am-gold-deep));
       -webkit-background-clip: text; -webkit-text-fill-color: transparent;
     }
     #loading-bar-container {
       width: min(80%, 400px); height: 6px;
-      background: rgba(255,255,255,0.1); border-radius: 3px; overflow: hidden;
+      background: rgba(255, 255, 255, 0.1); border-radius: 3px; overflow: hidden;
     }
     #loading-bar {
       width: 0%; height: 100%;
-      background: linear-gradient(90deg, #667eea, #764ba2);
+      background: linear-gradient(90deg, var(--am-gold), var(--am-gold-deep));
       border-radius: 3px; transition: width 0.3s ease;
     }
     #loading-text {
-      margin-top: 1rem; font-size: 0.85rem; color: rgba(255,255,255,0.5);
-      letter-spacing: 0.1em;
+      margin-top: 1rem; font-size: 0.85rem; color: rgba(255, 255, 255, 0.6);
+      letter-spacing: 0.1em; font-weight: 500;
     }
 
+    /* ─── Touch jump button ───────────────────────────────────────── */
     #touch-jump {
       display: none; position: fixed; bottom: 30px; right: 30px; z-index: 100;
       width: 70px; height: 70px; border-radius: 50%;
-      background: rgba(255,255,255,0.15); border: 2px solid rgba(255,255,255,0.3);
-      color: #fff; font-size: 1.2rem; font-weight: bold;
-      backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px);
+      background: rgba(255, 255, 255, 0.15); border: 2px solid rgba(255, 255, 255, 0.3);
+      color: #fff; font-family: var(--am-font); font-size: 1rem; font-weight: 700;
+      letter-spacing: 0.05em; text-transform: uppercase;
+      backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);
       touch-action: manipulation; user-select: none;
-      display: none; align-items: center; justify-content: center;
+      align-items: center; justify-content: center;
     }
-    #touch-jump:active { background: rgba(255,255,255,0.3); }
+    #touch-jump:active { background: rgba(255, 255, 255, 0.3); }
 
     #joystick-zone {
       display: none; position: fixed; bottom: 0; left: 0;
       width: 50%; height: 40%; z-index: 100;
     }
 
+    /* ─── Debug overlay ───────────────────────────────────────────── */
     #debug-info {
       display: none; position: fixed; top: 10px; left: 10px; z-index: 100;
-      font-family: monospace; font-size: 12px; color: #0f0;
-      background: rgba(0,0,0,0.5); padding: 8px; border-radius: 4px;
-      pointer-events: none;
+      font-family: 'SF Mono', ui-monospace, monospace; font-size: 12px;
+      color: var(--am-gold);
+      background: var(--am-glass-strong);
+      padding: 8px 10px; border-radius: 6px;
+      pointer-events: none; white-space: pre;
     }
 
+    /* ─── Mode indicator (CHARACTER MODE / CAMERA MODE) ───────────── */
     #mode-indicator {
       position: fixed; top: 16px; right: 16px; z-index: 100;
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-      font-size: 0.75rem; font-weight: 600; letter-spacing: 0.08em;
+      font-family: var(--am-font);
+      font-size: 0.72rem; font-weight: 700; letter-spacing: 0.1em;
       text-transform: uppercase;
-      color: #fff; background: rgba(0,0,0,0.5);
-      padding: 6px 14px; border-radius: 20px;
+      color: #fff; background: var(--am-glass);
+      padding: 8px 14px; border-radius: var(--am-radius-pill);
       backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
       pointer-events: none; user-select: none;
-      transition: background 0.3s ease;
+      transition: background 0.3s ease, color 0.3s ease;
     }
     #mode-indicator.camera-mode {
-      background: rgba(102, 126, 234, 0.6);
+      background: var(--am-gold);
+      color: var(--am-dark-1);
     }
     #mode-indicator .hint {
-      display: block; font-size: 0.6rem; font-weight: 400;
-      opacity: 0.6; margin-top: 2px; letter-spacing: 0.05em;
+      display: block; font-size: 0.58rem; font-weight: 500;
+      opacity: 0.7; margin-top: 2px; letter-spacing: 0.06em;
     }
   </style>
-  <script type="module" crossorigin src="./assets/index-docuhewa.js"></script>
+  <script type="module" crossorigin src="./assets/index-BMSCDSg3.js"></script>
 </head>
 <body>
   <div id="loading-screen">
@@ -92,6 +158,6 @@
   <div id="joystick-zone"></div>
   <button id="touch-jump">Jump</button>
   <div id="debug-info"></div>
-  <div id="mode-indicator">CHARACTER MODE<span class="hint">TAB to toggle</span></div>
+  <div id="mode-indicator">CHARACTER MODE<span class="hint">TAB to toggle</span></div>
 </body>
 </html>
