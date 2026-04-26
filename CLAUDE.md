@@ -34,6 +34,8 @@ For boom/runner: straight copy. For al-madina: builds with Vite first.
 - **Game source lives at** `/Users/osamakhalil/dev/Game Experiments/` (boom, runner, al-madina)
 - **Never edit inside `boom/`, `runner/`, or `al-madina/`** — sync.sh runs `rsync --delete` against these dirs, so local changes here get wiped on next sync. Edit the sources in `/Users/osamakhalil/dev/Game Experiments/` instead.
 - **Run `sync.sh` from the repo root** — it resolves `SCRIPT_DIR` from its own location but the `cd` into the Al-Madina source assumes that layout.
+- **Subagent QA screenshots can leak into `al-madina/`** — Sandbox redirects `/tmp/` writes into the games-portal repo. Remove stray `*.png` + `.playwright-mcp/` from `al-madina/` before committing. `sync.sh`'s rsync --delete cleans them, but they pollute `git status` and risk being committed manually.
+- **Vite bundle-hash rename is normal** — Each `npm run build` produces a fresh `al-madina/assets/index-XXXXX.js`; git shows a rename or delete+add. Not a real change to scrutinize.
 
 ## Deploy
 
