@@ -42,8 +42,24 @@ For boom/runner: straight copy. For al-madina: builds with Vite first.
 
 ## Deploy
 
-Auto-deploys on push to main via Vercel + GitHub integration.
-Manual: `npx vercel --prod --yes --scope byosama`
+**Deploy manually. The GitHub integration is not firing.**
+
+```bash
+npx vercel --prod --yes --scope byosama
+```
+
+A push to main used to auto-deploy through the Vercel plus GitHub integration.
+It stopped. As of 2026-08-09 the newest deployment Vercel had was
+2026-04-26, while main carried commits from July that had never reached
+production. `npx vercel ls games-portal --scope byosama` shows the real
+deployment history and is the fastest way to check whether what is live
+matches what is committed.
+
+A push alone is therefore NOT a deploy. Push for the history, then run the
+command above, then check the live URL before you tell anyone it is up.
+
+Reconnecting the integration in the Vercel dashboard would fix this properly.
+Until somebody does that, the manual command is the deploy.
 
 ## Claude-Specific Dev Notes
 
