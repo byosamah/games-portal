@@ -1,0 +1,144 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>HALCYON — Cape Aurelia</title>
+<meta name="description" content="A 3D platformer on Cape Aurelia: white stone ruins, terracotta roofs, turquoise sea. Built in Three.js. Keyboard and mouse." />
+<meta property="og:title" content="HALCYON — Cape Aurelia" />
+<meta property="og:description" content="A 3D platformer on Cape Aurelia. Built in Three.js." />
+<meta property="og:type" content="website" />
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%232E96D8'/%3E%3Ccircle cx='16' cy='16' r='7' fill='%23FFD35C'/%3E%3C/svg%3E" />
+<style>
+  :root { color-scheme: dark; }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body { width: 100%; height: 100%; overflow: hidden; background: #0d1b26; }
+  body { font-family: ui-rounded, "SF Pro Rounded", "Avenir Next", system-ui, sans-serif; }
+  #app { position: fixed; inset: 0; }
+  canvas { display: block; width: 100%; height: 100%; touch-action: none; }
+
+  /* Boot veil. Fades once the first real frame is drawn. */
+  #boot {
+    position: fixed; inset: 0; z-index: 50;
+    display: grid; place-content: center; gap: 1.4rem; justify-items: center;
+    background: radial-gradient(120% 90% at 50% 20%, #2E96D8 0%, #0d3b57 55%, #08222f 100%);
+    transition: opacity .7s ease .15s, visibility .7s ease .15s;
+  }
+  #boot.gone { opacity: 0; visibility: hidden; }
+  #boot h1 {
+    font-size: clamp(2.6rem, 9vw, 5.4rem); letter-spacing: .32em; font-weight: 700;
+    color: #FBF4E6; text-indent: .32em;
+    text-shadow: 0 2px 0 #C9663A, 0 10px 40px rgba(0,0,0,.45);
+  }
+  #boot p { color: #D3E9F3; opacity: .8; font-size: .95rem; letter-spacing: .16em; text-transform: uppercase; }
+  #bootbar { width: min(320px, 62vw); height: 4px; border-radius: 99px; background: rgba(255,255,255,.18); overflow: hidden; }
+  #bootbar i { display: block; height: 100%; width: 0%; border-radius: 99px; background: linear-gradient(90deg, #FFD35C, #FFF0B8); transition: width .25s ease; }
+
+  /* Fatal error surface. Silent failure is not allowed. */
+  #fatal {
+    position: fixed; inset: 0; z-index: 100; display: none;
+    padding: 6vh 6vw; overflow: auto;
+    background: #1b0f0c; color: #ffd9cc;
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 13px; line-height: 1.65;
+  }
+  #fatal.on { display: block; }
+  #fatal h2 { font-family: inherit; color: #ff8a66; font-size: 15px; margin-bottom: 1rem; letter-spacing: .04em; }
+  #fatal pre { white-space: pre-wrap; word-break: break-word; }
+
+  /* The door policy. See the gate script at the bottom of the body. */
+  #gate {
+    position: fixed; inset: 0; z-index: 120; display: none;
+    place-content: center; justify-items: center; gap: 1.1rem;
+    padding: 8vh 8vw; text-align: center;
+    background: radial-gradient(120% 90% at 50% 20%, #2E96D8 0%, #0d3b57 55%, #08222f 100%);
+    color: #FBF4E6;
+  }
+  #gate.on { display: grid; }
+  #gate h1 {
+    font-size: clamp(2rem, 11vw, 3.4rem); letter-spacing: .3em; font-weight: 700;
+    text-indent: .3em; text-shadow: 0 2px 0 #C9663A, 0 10px 40px rgba(0,0,0,.45);
+  }
+  #gate p { max-width: 30ch; line-height: 1.65; color: #D3E9F3; font-size: 1rem; }
+  #gate .keys { color: #FFD35C; letter-spacing: .1em; font-size: .9rem; text-transform: uppercase; }
+  #gate a {
+    margin-top: .6rem; padding: .85rem 1.7rem; border-radius: 99px;
+    background: #FBF4E6; color: #0d2231; text-decoration: none;
+    font-size: .85rem; letter-spacing: .14em; text-transform: uppercase; font-weight: 600;
+  }
+</style>
+  <script type="module" crossorigin src="./assets/main-BIoil1Wg.js"></script>
+</head>
+<body>
+  <div id="app"></div>
+
+  <div id="boot">
+    <h1>HALCYON</h1>
+    <p>Cape Aurelia</p>
+    <div id="bootbar"><i></i></div>
+  </div>
+
+  <div id="fatal"><h2>The game failed to start.</h2><pre></pre></div>
+
+  <div id="gate">
+    <h1>HALCYON</h1>
+    <p id="gate-why"></p>
+    <p class="keys" id="gate-keys"></p>
+    <a href="https://games.osama.me/">Back to the games</a>
+  </div>
+
+  <!--
+    THE DOOR POLICY. A classic script, so it runs before the deferred module
+    below and can decide whether the game is allowed to start at all.
+
+    Two ways in are refused, both of them for the player's benefit:
+
+    1. NO FINE POINTER. src/core/Input.js binds keyboard, mouse, pointer lock
+       and gamepad, and nothing else. On a phone the game would boot, draw
+       Cape Aurelia beautifully, and then refuse to move. A screen that says
+       so is more honest than a world you cannot walk in. `any-pointer: fine`
+       is the right test rather than a user agent string: an iPad with a
+       trackpad passes it, and a touchscreen laptop passes it too, because
+       both of those really can play.
+
+    2. NO WEBGL. Better a sentence than the fatal stack trace behind it.
+
+    `?nogate=1` forces entry, for testing the touch case on real hardware.
+  -->
+  <script>
+  (function () {
+    var gate = document.getElementById('gate');
+    var why = document.getElementById('gate-why');
+    var keys = document.getElementById('gate-keys');
+    var forced = false;
+    try { forced = new URLSearchParams(location.search).get('nogate') === '1'; } catch (e) {}
+
+    function refuse(message, hint) {
+      why.textContent = message;
+      keys.textContent = hint || '';
+      gate.classList.add('on');
+      var boot = document.getElementById('boot');
+      if (boot) boot.classList.add('gone');
+      window.__HALCYON_GATED__ = true;
+    }
+
+    var fine = !!(window.matchMedia && window.matchMedia('(any-pointer: fine)').matches);
+    if (!fine && !forced) {
+      refuse('This one needs a keyboard and a mouse. There are no touch controls yet, so a phone can see Cape Aurelia but cannot walk around it.',
+             'Come back on a laptop');
+      return;
+    }
+
+    var ok = false;
+    try {
+      var c = document.createElement('canvas');
+      ok = !!(window.WebGLRenderingContext && (c.getContext('webgl2') || c.getContext('webgl')));
+    } catch (e) { ok = false; }
+    if (!ok) {
+      refuse('This browser cannot run WebGL, which is what draws the world. Chrome, Edge, Firefox or Safari, kept up to date, all can.',
+             'WebGL required');
+    }
+  }());
+  </script>
+
+</body>
+</html>

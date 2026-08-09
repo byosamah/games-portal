@@ -4,7 +4,13 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Games — Osama Khalil</title>
-  <meta name="description" content="Game experiments by Osama Khalil. Play BOOM, Runner, and Al-Madina directly in your browser.">
+  <meta name="description" content="Game experiments by Osama Khalil. Play BOOM, Runner, Al-Madina and Halcyon directly in your browser.">
+  <meta property="og:title" content="Games by Osama Khalil">
+  <meta property="og:description" content="Game experiments by Osama Khalil. Play BOOM, Runner, Al-Madina and Halcyon directly in your browser.">
+  <meta property="og:url" content="https://games.osama.me/">
+  <meta property="og:type" content="website">
+  <meta property="og:image" content="https://games.osama.me/img/al-madina.png">
+  <meta name="twitter:card" content="summary_large_image">
   <link rel="icon" type="image/png" sizes="32x32" href="img/favicon-32.png">
   <link rel="icon" type="image/png" sizes="16x16" href="img/favicon-16.png">
   <link rel="apple-touch-icon" sizes="180x180" href="img/apple-touch-icon.png">
@@ -30,6 +36,7 @@
           <li><span class="game-name boom">BOOM</span> &mdash; rage-driven development. Pew pew.</li>
           <li><span class="game-name runner">RUNNER</span> &mdash; boredom-driven development. He runs. I watch.</li>
           <li><span class="game-name madina">AL-MADINA</span> &mdash; &ldquo;what if a city?&rdquo; became &ldquo;oh no, a city.&rdquo;</li>
+          <li><span class="game-name halcyon">HALCYON</span> &mdash; a coast, a bird, and far too many agents.</li>
           <li>No plan. No tutorial. No refunds. Pick one. Bring coffee.<span class="cursor">&#9608;</span></li>
         </ul>
         <div class="dialogue-footer">
@@ -52,6 +59,7 @@
           <span class="tag">SHOOTER</span>
           <h2>BOOM</h2>
           <p>Top-down 3D shooter with levels and story</p>
+          <p class="card-hint">MOUSE + WASD</p>
         </div>
       </a>
 
@@ -63,6 +71,7 @@
           <span class="tag">RUNNER</span>
           <h2>RUNNER</h2>
           <p>Endless runner with 3D characters and obstacles</p>
+          <p class="card-hint">ONE BUTTON &middot; ANY DEVICE</p>
         </div>
       </a>
 
@@ -74,13 +83,41 @@
           <span class="tag">EXPLORER</span>
           <h2>AL-MADINA</h2>
           <p>3D city explorer with procedural generation</p>
+          <p class="card-hint">WASD OR TOUCH</p>
         </div>
       </a>
+
+      <a href="/halcyon/" class="card">
+        <div class="card-img">
+          <!-- JPEG at 800x700, about 140 KB. The other three cards are 2160x1890
+               PNGs of roughly 1 MB each, displayed at this same size. -->
+          <img src="img/halcyon.jpg" alt="Halcyon — a 3D platformer on a Mediterranean coast" width="800" height="700" loading="lazy">
+        </div>
+        <div class="card-info">
+          <span class="tag">PLATFORMER</span>
+          <h2>HALCYON</h2>
+          <p>3D platformer on a Mediterranean coast. An experiment, still rough.</p>
+          <p class="card-hint">KEYBOARD ONLY &middot; DESKTOP</p>
+        </div>
+      </a>
+
+      <div class="card card-locked" aria-disabled="true">
+        <div class="card-img card-img-locked">
+          <span class="locked-glyph">?</span>
+        </div>
+        <div class="card-info">
+          <span class="tag">???</span>
+          <h2>COMING SOON</h2>
+          <p>The cartridge is still in the oven.</p>
+          <p class="card-hint">CONTROLS UNKNOWN</p>
+        </div>
+      </div>
     </div>
 
     <footer>
       <p>WASD / tap to play &mdash; built with Three.js</p>
     </footer>
   </main>
+  <script defer src="/_vercel/insights/script.js"></script>
 </body>
 </html>

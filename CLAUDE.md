@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-Static game launcher site at games.osama.me. Landing page with 3 game cards linking to /boom/, /runner/, /al-madina/.
+Static game launcher site at games.osama.me. Landing page with 4 game cards linking to /boom/, /runner/, /al-madina/, /halcyon/, plus one locked "coming soon" card.
 
 ## Architecture
 
@@ -13,8 +13,8 @@ Pure static files, no framework, no build step for the portal itself. Deployed t
 - `index.html` + `styles.css` — Landing page
 - `img/` — Landing-page card screenshots (not game assets)
 - `boom/`, `runner/` — Copied verbatim from `/dev/Game Experiments/`
-- `al-madina/` — Vite build output (not raw source)
-- `sync.sh` — Copies games from source, builds Al-Madina
+- `al-madina/`, `halcyon/` — Vite build output (not raw source)
+- `sync.sh` — Copies games from source, builds Al-Madina and Halcyon
 - `vercel.json` — `trailingSlash: true` (required for relative asset paths in games)
 
 ## Local Preview
@@ -31,8 +31,11 @@ For boom/runner: straight copy. For al-madina: builds with Vite first.
 - **Vercel must use `trailingSlash: true`** — Games use relative paths for assets. Without trailing slash, paths resolve against root instead of the game subdirectory.
 - **Al-Madina build requires two patches** — `--base='./'` for Vite AND `ASSET_BASE = './assets'` in config.ts. The sync script handles both via sed + restore.
 - **Never modify game source files permanently** — sync.sh patches before build and restores after.
-- **Game source lives at** `/Users/osamakhalil/dev/Game Experiments/` (boom, runner, al-madina)
-- **Never edit inside `boom/`, `runner/`, or `al-madina/`** — sync.sh runs `rsync --delete` against these dirs, so local changes here get wiped on next sync. Edit the sources in `/Users/osamakhalil/dev/Game Experiments/` instead.
+- **Game source lives at** `/Users/osamakhalil/dev/Game Experiments/` (boom, runner, al-madina). **Halcyon is the exception**: its source is its own repo at `/Users/osamakhalil/dev/halcyon/`.
+- **Never edit inside `boom/`, `runner/`, `al-madina/`, or `halcyon/`** — sync.sh runs `rsync --delete` against these dirs, so local changes here get wiped on next sync. Edit the sources instead.
+- **Halcyon needs no source patching** — unlike Al-Madina, `--base='./'` alone is enough. The game loads zero files at runtime: every mesh, texture and sound is generated in code, so the build output is only JavaScript. That is also why it is 2 MB on disk against Al-Madina's 89 MB.
+- **Halcyon is desktop-only by design** — `index.html` carries a gate script that refuses any device with no fine pointer, because `src/core/Input.js` binds keyboard, mouse and gamepad and has no touch handling. `?nogate=1` forces entry for testing.
+- **Halcyon picks its own graphics tier** — `src/perf/Budget.js` measures the frame rate and steps down through High, Medium and Low. `?quality=high|medium|low` forces one and freezes it. Players can override it in the pause menu under Graphics.
 - **Run `sync.sh` from the repo root** — it resolves `SCRIPT_DIR` from its own location but the `cd` into the Al-Madina source assumes that layout.
 - **Subagent QA screenshots can leak into `al-madina/`** — Sandbox redirects `/tmp/` writes into the games-portal repo. Remove stray `*.png` + `.playwright-mcp/` from `al-madina/` before committing. `sync.sh`'s rsync --delete cleans them, but they pollute `git status` and risk being committed manually.
 - **Vite bundle-hash rename is normal** — Each `npm run build` produces a fresh `al-madina/assets/index-XXXXX.js`; git shows a rename or delete+add. Not a real change to scrutinize.

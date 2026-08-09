@@ -154,6 +154,7 @@ h1 {
 .game-name.boom { color: #ff6b6b; text-shadow: 0 0 6px rgba(255, 107, 107, 0.4); }
 .game-name.runner { color: #fbbf24; text-shadow: 0 0 6px rgba(251, 191, 36, 0.4); }
 .game-name.madina { color: #7dd3fc; text-shadow: 0 0 6px rgba(125, 211, 252, 0.4); }
+.game-name.halcyon { color: #2ec4b6; text-shadow: 0 0 6px rgba(46, 196, 182, 0.4); }
 
 .cursor {
   display: inline-block;
@@ -311,6 +312,10 @@ h1 {
 .games .card:nth-child(1) { --accent: #ff6b6b; }
 .games .card:nth-child(2) { --accent: #fbbf24; }
 .games .card:nth-child(3) { --accent: #7dd3fc; }
+/* Halcyon takes slot 4, so the locked cartridge moves to 5. Keep these in step
+   with the card order in index.html: the accent is positional, not semantic. */
+.games .card:nth-child(4) { --accent: #2ec4b6; }
+.games .card:nth-child(5) { --accent: #4a4a56; }
 
 .card:hover {
   border-color: var(--accent, #7dd3fc);
@@ -365,6 +370,14 @@ h1 {
   line-height: 1.5;
 }
 
+.card .card-hint {
+  margin-top: 0.625rem;
+  font-family: 'Press Start 2P', monospace;
+  font-size: 0.4375rem;
+  letter-spacing: 0.08em;
+  color: #4a4a56;
+}
+
 .tag {
   display: inline-block;
   font-family: 'Press Start 2P', monospace;
@@ -376,6 +389,31 @@ h1 {
   margin-bottom: 0.75rem;
   filter: drop-shadow(0 0 4px currentColor);
   opacity: 0.9;
+}
+
+/* Locked card */
+
+.card.card-locked {
+  cursor: default;
+  opacity: 0.55;
+}
+
+.card.card-locked:hover {
+  border-color: #2a2a36;
+  transform: none;
+  box-shadow: inset 0 0 0 1px #0c0c12, 0 0 0 1px #0c0c12;
+}
+
+.card-img-locked {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.locked-glyph {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 2rem;
+  color: #2a2a36;
 }
 
 /* --- Footer --- */
